@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from typing import Optional
 import json
 from services.groq_client import chat_completion
+from services.supabase_service import db
 
 router = APIRouter()
 
@@ -12,6 +13,7 @@ class CodegenRequest(BaseModel):
     problem_type: str
     top_model: Optional[str] = ""
     dataset_info: Optional[str] = ""
+    project_id: Optional[str] = None
 
 
 @router.post("/codegen")
@@ -45,5 +47,14 @@ Return ONLY valid Python code wrapped in ```python ... ```. Do NOT return JSON o
         code = content.split("```python")[1].split("```")[0].strip()
     elif "```" in content:
         code = content.split("```")[1].split("```")[0].strip()
+
+    # Persist to Supabase
+    if req.project_id:
+        db.upsert_project_data(
+            table="code_generations",
+            project_id=req.project_id,
+            data={}, # No complex JSON for this table
+            text_fields={"code": code, "language": "python"}
+        )
 
     return {"code": code, "language": "python"}

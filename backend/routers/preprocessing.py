@@ -4,6 +4,7 @@ from typing import Optional
 import json
 from services.groq_client import chat_completion
 from services.knowledge_base import PREPROCESSING
+from services.supabase_service import db
 
 router = APIRouter()
 
@@ -12,6 +13,7 @@ class PreprocessingRequest(BaseModel):
     problem: str
     problem_type: str
     dataset_info: Optional[str] = ""
+    project_id: Optional[str] = None
 
 
 @router.post("/preprocessing")
@@ -49,10 +51,16 @@ Return ONLY valid JSON:
     except Exception:
         code = _fallback_code(req.problem_type)
 
-    return {
+    result_data = {
         "steps": base_steps,
         "code": code
     }
+
+    # Persist to Supabase
+    if req.project_id:
+        db.upsert_project_data("preprocessing", req.project_id, result_data)
+
+    return result_data
 
 
 def _fallback_code(problem_type: str) -> str:

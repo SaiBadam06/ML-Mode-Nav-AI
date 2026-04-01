@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from typing import Optional
 import json
 from services.groq_client import chat_completion
+from services.supabase_service import db
 
 router = APIRouter()
 
@@ -11,6 +12,7 @@ class ExperimentsRequest(BaseModel):
     problem: str
     problem_type: str
     top_model: Optional[str] = ""
+    project_id: Optional[str] = None
 
 
 @router.post("/experiments")
@@ -90,5 +92,9 @@ Return ONLY valid JSON:
                 }
             ]
         }
+
+    # Persist to Supabase
+    if req.project_id:
+        db.upsert_project_data("experiments", req.project_id, result)
 
     return result

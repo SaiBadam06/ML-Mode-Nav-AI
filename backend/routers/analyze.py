@@ -4,6 +4,7 @@ from typing import Optional
 import json
 from services.groq_client import chat_completion
 from services.knowledge_base import PROBLEM_TYPES
+from services.supabase_service import db
 
 router = APIRouter()
 
@@ -11,10 +12,18 @@ router = APIRouter()
 class AnalyzeRequest(BaseModel):
     problem: str
     dataset_info: Optional[str] = ""
+    project_id: Optional[str] = None
+    project_name: Optional[str] = "ModelNavigator Project"
 
 
 @router.post("/analyze")
 async def analyze_problem(req: AnalyzeRequest):
+    # Ensure project exists
+    project_id = req.project_id
+    if not project_id:
+        project = db.create_project(name=req.project_name)
+        project_id = project.get("id")
+
     prompt = f"""You are an expert ML engineer. Analyze the following problem description and classify it.
 
 Problem: {req.problem}
@@ -51,4 +60,12 @@ Respond ONLY with a valid JSON object in this exact format:
             "suggested_approach": "Start with a baseline classifier and iterate."
         }
 
-    return result
+    # Persist to Supabase
+    db.upsert_project_data(
+        table="analyses",
+        project_id=project_id,
+        data=result,
+        text_fields={"problem_text": req.problem, "dataset_info": req.dataset_info}
+    )
+
+    return {**result, "project_id": project_id}

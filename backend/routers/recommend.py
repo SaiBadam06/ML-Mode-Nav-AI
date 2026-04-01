@@ -4,6 +4,7 @@ from typing import Optional
 import json
 from services.groq_client import chat_completion
 from services.knowledge_base import ALGORITHMS
+from services.supabase_service import db
 
 router = APIRouter()
 
@@ -12,6 +13,7 @@ class RecommendRequest(BaseModel):
     problem: str
     problem_type: str
     domain: Optional[str] = ""
+    project_id: Optional[str] = None
 
 
 @router.post("/recommend")
@@ -60,9 +62,15 @@ Algorithm names to explain: {[a['name'] for cat in base_algos.values() for a in 
             })
         return result
 
-    return {
+    result = {
         "beginner": enrich(base_algos.get("beginner", [])),
         "advanced": enrich(base_algos.get("advanced", [])),
         "top_pick": enrichment.get("top_pick", ""),
         "top_pick_reason": enrichment.get("top_pick_reason", ""),
     }
+
+    # Persist to Supabase
+    if req.project_id:
+        db.upsert_project_data("recommendations", req.project_id, result)
+
+    return result

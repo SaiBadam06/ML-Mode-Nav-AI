@@ -136,7 +136,6 @@ export default function Analyze() {
               value={problem}
               onChange={e => setProblem(e.target.value)}
               required
-              style={{ fontSize: '1rem', lineHeight: '1.6', background: 'rgba(0,0,0,0.4)', padding: '20px' }}
             />
             <span style={{ fontSize: '0.85rem', color: 'var(--cyan)', marginTop: '8px', display: 'block' }}>
               💡 Tip: Include the goal, data type, and any domain context for the best results.
@@ -156,7 +155,6 @@ export default function Analyze() {
               placeholder="e.g. CSV file with 50k rows, columns: age, income, credit_score, loan_amount, default (target), some missing values in income column..."
               value={datasetInfo}
               onChange={e => setDatasetInfo(e.target.value)}
-              style={{ fontSize: '0.95rem', background: 'rgba(0,0,0,0.4)', padding: '16px' }}
             />
           </div>
 

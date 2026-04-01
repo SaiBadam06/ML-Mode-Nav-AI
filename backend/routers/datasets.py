@@ -4,6 +4,7 @@ from typing import Optional
 import json
 from services.groq_client import chat_completion
 from services.knowledge_base import DATASETS
+from services.supabase_service import db
 
 router = APIRouter()
 
@@ -12,6 +13,7 @@ class DatasetsRequest(BaseModel):
     problem: str
     problem_type: str
     domain: Optional[str] = ""
+    project_id: Optional[str] = None
 
 
 @router.post("/datasets")
@@ -49,4 +51,10 @@ Return ONLY valid JSON:
         {**d, "relevance": f"Standard benchmark for {req.problem_type} problems."} for d in base_datasets
     ] + additional
 
-    return {"datasets": all_datasets}
+    result = {"datasets": all_datasets}
+
+    # Persist to Supabase
+    if req.project_id:
+        db.upsert_project_data("datasets", req.project_id, result)
+
+    return result

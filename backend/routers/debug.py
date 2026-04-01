@@ -2,12 +2,14 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 from typing import Optional
 from services.groq_client import chat_completion
+from services.supabase_service import db
 
 router = APIRouter()
 
 class DebugRequest(BaseModel):
     context: dict
     history: list = []
+    project_id: Optional[str] = None
 
 @router.post("/debug")
 async def analyze_and_debug_code(req: DebugRequest):
@@ -40,5 +42,15 @@ Be concise, helpful, and provide code snippets if necessary to fix the user's er
         temperature=0.3,
         max_tokens=2048
     )
+
+    # Persist to Supabase
+    if req.project_id:
+        last_user_query = req.history[-1].get("content", "") if req.history else "Code analysis"
+        db.upsert_project_data(
+            table="debug_sessions",
+            project_id=req.project_id,
+            data={"analysis": content},
+            text_fields={"error_message": last_user_query}
+        )
 
     return {"analysis": content}

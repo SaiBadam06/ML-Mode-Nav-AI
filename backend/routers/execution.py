@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from typing import Optional
 import json
 from services.groq_client import chat_completion
+from services.supabase_service import db
 
 router = APIRouter()
 
@@ -12,6 +13,7 @@ class ExecutionRequest(BaseModel):
     problem_type: str
     top_model: Optional[str] = ""
     dataset_info: Optional[str] = ""
+    project_id: Optional[str] = None
 
 
 @router.post("/execution")
@@ -65,6 +67,10 @@ Given the problem and model size, output ONLY a valid JSON object:
         result = json.loads(content[start:end])
     except Exception:
         result = _fallback_execution(req.problem_type)
+
+    # Persist to Supabase
+    if req.project_id:
+        db.upsert_project_data("executions", req.project_id, result)
 
     return result
 

@@ -565,9 +565,14 @@ body {
 .divider { height: 1px; background: var(--border); margin: 20px 0; }
 
 /* Input styles */
+input, textarea, select, button {
+  font-family: inherit;
+  color: inherit;
+}
+
 .form-group { display: flex; flex-direction: column; gap: 8px; }
 .form-label { font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); }
-.form-control {
+.input-field, .form-control {
   width: 100%;
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -580,8 +585,8 @@ body {
   transition: var(--transition);
   resize: vertical;
 }
-.form-control:focus { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(124,58,237,0.15); }
-.form-control::placeholder { color: var(--text-muted); }
+.input-field:focus, .form-control:focus { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(124,58,237,0.15); }
+.input-field::placeholder, .form-control::placeholder { color: var(--text-muted); }
 
 /* Stat pill */
 .stat-pill {

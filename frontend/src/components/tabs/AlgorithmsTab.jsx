@@ -3,10 +3,20 @@ export default function AlgorithmsTab({ data }) {
 
   function AlgoCard({ algo, isTopPick }) {
     return (
-      <div className="card glass-hover" style={{ position: 'relative', border: isTopPick ? '1px solid var(--purple)' : undefined }}>
+      <div className="card glass-hover" style={{ 
+        position: 'relative', 
+        border: isTopPick ? '1px solid var(--purple)' : '1px solid var(--border)',
+        marginTop: isTopPick ? '20px' : '0',
+        boxShadow: isTopPick ? '0 0 20px rgba(124, 58, 237, 0.15)' : 'none',
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%'
+      }}>
         {isTopPick && (
-          <div style={{ position: 'absolute', top: -10, right: 16 }}>
-            <div className="badge badge-purple">⭐ Top Pick</div>
+          <div style={{ position: 'absolute', top: -14, left: 16, zIndex: 10 }}>
+            <div className="badge badge-purple" style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.5)', background: 'var(--purple)', border: '1px solid var(--purple-light)' }}>
+              ⭐ Top Pick
+            </div>
           </div>
         )}
         <div style={{ marginBottom: '12px' }}>

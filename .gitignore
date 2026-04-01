@@ -1,0 +1,40 @@
+# Root .gitignore for ModelNavigator AI
+# Environment files
+.env
+*.env
+backend/.env
+
+# Dependencies
+node_modules/
+frontend/node_modules/
+backend/venv/
+backend/.venv/
+env/
+.env/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# Dist files
+dist/
+build/
+backend/build/
+frontend/dist/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Misc
+error.txt
+.vscode/
+.idea/

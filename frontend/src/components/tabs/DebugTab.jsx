@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import ReactMarkdown from 'react-markdown'
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
 
 export default function DebugTab({ results }) {
   const [messages, setMessages] = useState([
@@ -35,7 +36,7 @@ export default function DebugTab({ results }) {
       
       historyToSend.push({ role: 'user', content: userMessage.text })
 
-      const res = await fetch('http://localhost:8000/api/debug', {
+      const res = await fetch(`${API_URL}/debug`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
